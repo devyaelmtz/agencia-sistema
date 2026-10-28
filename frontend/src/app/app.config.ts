@@ -3,13 +3,14 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
 // 1. NUEVO: Importa el proveedor de HTTP
-import { provideHttpClient } from '@angular/common/http'; 
+import { authInterceptor } from './servicios/auth.interceptor';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }), 
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     // 2. NUEVO: Agrega el proveedor a la lista
-    provideHttpClient() 
+    provideHttpClient(withInterceptors([authInterceptor]))
   ]
 };
