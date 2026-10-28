@@ -16,16 +16,17 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         this.repository = repository;
     }
 
+    private Usuario map(UsuarioEntity e) {
+        Usuario u = new Usuario(e.getId(), e.getNombreUsuario(), e.getCorreo(), e.getPassword(), e.getRolId());
+        u.setTelefono(e.getTelefono());
+        return u;
+    }
+    @Override
+    public Usuario findByCorreo(String correo) { return repository.findByCorreoIgnoreCase(correo).map(this::map).orElse(null); }
     @Override
     public List<Usuario> findAll() {
         List<UsuarioEntity> entities = repository.findAll();
-        return entities.stream().map(e -> new Usuario(
-                e.getId(),
-                e.getNombreUsuario(),
-                e.getCorreo(),
-                e.getPassword(),
-                e.getRolId()
-        )).collect(Collectors.toList());
+        return entities.stream().map(this::map).collect(Collectors.toList());
     }
 
     @Override
@@ -34,7 +35,7 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         if (entity == null) {
             return null;
         }
-        return new Usuario(entity.getId(), entity.getNombreUsuario(), entity.getCorreo(), entity.getPassword(), entity.getRolId());
+        return map(entity);
     }
 
     @Override
@@ -45,8 +46,9 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         entity.setCorreo(usuario.getCorreo());
         entity.setPassword(usuario.getPassword());
         entity.setRolId(usuario.getRolId());
+        entity.setTelefono(usuario.getTelefono());
 
         UsuarioEntity saved = repository.save(entity);
-        return new Usuario(saved.getId(), saved.getNombreUsuario(), saved.getCorreo(), saved.getPassword(), saved.getRolId());
+        return map(saved);
     }
 }

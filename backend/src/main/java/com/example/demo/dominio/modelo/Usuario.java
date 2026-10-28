@@ -4,8 +4,13 @@ public class Usuario {
     private Long id;
     private String nombreUsuario;
     private String correo;
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
     private String password;
     private Long rolId;
+
+    private String telefono;
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
     public Usuario() {}
 

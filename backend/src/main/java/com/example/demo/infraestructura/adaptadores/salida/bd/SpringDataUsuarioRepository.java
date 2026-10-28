@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SpringDataUsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
+    java.util.Optional<UsuarioEntity> findByCorreoIgnoreCase(String correo);
 }

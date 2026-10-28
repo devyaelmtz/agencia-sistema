@@ -13,7 +13,7 @@ public class UsuarioEntity {
     @Column(name = "nombre_usuario", length = 50)
     private String nombreUsuario;
 
-    @Column(length = 100)
+    @Column(length = 100, unique = true)
     private String correo;
 
     @Column(length = 255)
@@ -21,6 +21,10 @@ public class UsuarioEntity {
 
     @Column(name = "rol_id")
     private Long rolId;
+
+    private String telefono;
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
     public UsuarioEntity() {}
 

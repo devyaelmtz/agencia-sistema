@@ -15,6 +15,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/usuarios/**", "/api/usuarios").denyAll()
                 .anyRequest().permitAll() // Permitimos el acceso inicial para pruebas con Angular y Postman
             )
             .httpBasic(withDefaults());

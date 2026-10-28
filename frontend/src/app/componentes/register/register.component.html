@@ -1,0 +1,10 @@
+<section class="auth-card"><h1>Crear cuenta</h1><form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+<label for="nombreUsuario">Nombre de usuario</label><input id="nombreUsuario" type="text" autocomplete="nickname" formControlName="nombreUsuario" aria-describedby="nombreUsuario-error" [attr.aria-invalid]="form.controls.nombreUsuario.touched && form.controls.nombreUsuario.invalid">
+<small id="nombreUsuario-error" *ngIf="form.controls.nombreUsuario.touched && form.controls.nombreUsuario.invalid">Escribe un nombre de 2 a 50 caracteres.</small>
+<label for="telefono">Teléfono (10 dígitos)</label><input id="telefono" type="tel" autocomplete="tel" formControlName="telefono" aria-describedby="telefono-error" [attr.aria-invalid]="form.controls.telefono.touched && form.controls.telefono.invalid">
+<small id="telefono-error" *ngIf="form.controls.telefono.touched && form.controls.telefono.invalid">El teléfono es obligatorio y debe tener exactamente 10 dígitos.</small>
+<label for="correo">Correo electrónico</label><input id="correo" type="email" autocomplete="email" formControlName="correo" aria-describedby="correo-error" [attr.aria-invalid]="form.controls.correo.touched && form.controls.correo.invalid">
+<small id="correo-error" *ngIf="form.controls.correo.touched && form.controls.correo.invalid">Introduce un correo válido (máximo 100 caracteres).</small>
+<label for="password">Contraseña</label><input id="password" type="password" autocomplete="new-password" formControlName="password" aria-describedby="password-error" [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid">
+<small id="password-error" *ngIf="form.controls.password.touched && form.controls.password.invalid">La contraseña debe tener entre 8 y 64 caracteres.</small>
+<p role="alert" *ngIf="error">{{ error }}</p><p role="status" *ngIf="mensaje">{{ mensaje }}</p><button type="submit" [disabled]="pendiente">{{ pendiente ? "Procesando…" : "Registrarme" }}</button></form><p><a routerLink="/login">Ya tengo cuenta</a></p></section>
