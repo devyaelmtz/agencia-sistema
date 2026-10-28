@@ -3,4 +3,4 @@
 <small id="correo-error" *ngIf="form.controls.correo.touched && form.controls.correo.invalid">Introduce un correo válido (máximo 100 caracteres).</small>
 <label for="password">Contraseña</label><input id="password" type="password" autocomplete="current-password" formControlName="password" aria-describedby="password-error" [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid">
 <small id="password-error" *ngIf="form.controls.password.touched && form.controls.password.invalid">La contraseña debe tener entre 8 y 64 caracteres.</small>
-<p role="alert" *ngIf="error">{{ error }}</p><p role="status" *ngIf="mensaje">{{ mensaje }}</p><button type="submit" [disabled]="pendiente">{{ pendiente ? "Procesando…" : "Entrar" }}</button></form><p><a routerLink="/register">Crear una cuenta</a></p></section>
+<p role="alert" *ngIf="error">{{ error }}</p><p role="status" *ngIf="mensaje">{{ mensaje }}</p><button type="submit" [disabled]="pendiente">{{ pendiente ? "Procesando…" : "Entrar" }}</button></form><p><a routerLink="/register">Crear una cuenta</a></p><p><a routerLink="/forgot-password">Olvidé mi contraseña</a></p></section>

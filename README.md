@@ -1,6 +1,6 @@
 # Agencia: acceso de usuarios
 
-Interfaz activa: `/login` y `/register`. La raíz redirige a login.
+Interfaz activa: login, registro, recuperación de contraseña, dashboard, administración de vehículos y solicitudes ARCO. La raíz redirige a login.
 
 ## Desarrollo
 
@@ -66,3 +66,7 @@ Ejemplo de cuerpo para POST/PUT:
 ```
 
 VIN: único, 17 caracteres alfanuméricos en mayúsculas sin I/O/Q. Año: 1886 hasta el siguiente año calendario. Precio: no negativo, máximo 13 enteros y 2 decimales. Kilometraje: entero no negativo. Estados: `DISPONIBLE`, `VENDIDO`, `MANTENIMIENTO`. Datos inválidos devuelven 400; VIN duplicado 409; sin JWT 401; escritura con ROLE_USER 403. La API legacy `/api/vehiculos` queda restringida a ADMIN para impedir escrituras por una vía alternativa. El nuevo inventario usa la tabla `vehicles`; no se migran automáticamente registros del modelo legacy.
+
+## Red local, recuperación y nuevo ARCO
+
+Consulta [la guía para Windows, SMTP y solicitudes ARCO](docs/REVISION-RED-CORREO-ARCO.md). El servidor de desarrollo Angular y Spring permiten acceso LAN; los nuevos formularios están en `/forgot-password`, `/reset-password` y `/arco`.

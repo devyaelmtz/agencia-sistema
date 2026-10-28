@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../servicios/auth.service';
-@Component({selector: 'app-dashboard', standalone: true, imports: [CommonModule, RouterLink], template: `<section class="auth-card"><h1>Inicio</h1><p *ngIf="nombre">Bienvenido, {{ nombre }}.</p><p *ngIf="error" role="alert">{{ error }}</p><p *ngIf="auth.isAdmin"><a routerLink="/admin/vehicles">Administrar vehículos →</a></p><button (click)="logout()">Cerrar sesión</button></section>`})
+@Component({selector: 'app-dashboard', standalone: true, imports: [CommonModule, RouterLink], template: `<section class="auth-card"><h1>Inicio</h1><p *ngIf="nombre">Bienvenido, {{ nombre }}.</p><p *ngIf="error" role="alert">{{ error }}</p><p *ngIf="auth.isAdmin"><a routerLink="/admin/vehicles">Administrar vehículos →</a></p><p><a routerLink="/arco">Mis solicitudes ARCO →</a></p><button (click)="logout()">Cerrar sesión</button></section>`})
 export class DashboardComponent {
   auth = inject(AuthService);
   private router = inject(Router);

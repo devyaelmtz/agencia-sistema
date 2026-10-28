@@ -8,7 +8,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const url = new URL(req.url, window.location.origin);
   const api = (url.origin === window.location.origin || url.origin === 'http://localhost:8080') && url.pathname.startsWith('/api/');
-  const publicEndpoint = ['/api/auth/login', '/api/auth/register'].includes(url.pathname);
+  const publicEndpoint = ['/api/auth/login', '/api/auth/register', '/api/auth/forgot-password', '/api/auth/reset-password'].includes(url.pathname);
   const token = api && !publicEndpoint ? auth.token : null;
   return next(token ? req.clone({setHeaders: {Authorization: `Bearer ${token}`}}) : req).pipe(catchError(err => {
     if (api && !publicEndpoint && err instanceof HttpErrorResponse && err.status === 401) {
