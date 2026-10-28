@@ -1,0 +1,60 @@
+<div style="padding: 20px; font-family: sans-serif;">
+  <h2>Gestión de Clientes</h2>
+
+  <!-- Formulario -->
+  <div style="background-color: #f4f4f4; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+    <h3>Registrar Cliente</h3>
+    <form (ngSubmit)="guardarCliente()">
+      <input type="text" name="nombre" placeholder="Nombre" [(ngModel)]="nuevoCliente.nombre" required
+        style="margin-right: 10px; padding: 5px;">
+      <input type="text" name="apellido" placeholder="Apellido" [(ngModel)]="nuevoCliente.apellido" required
+        style="margin-right: 10px; padding: 5px;">
+
+      <!-- Se cambió nuevoCliente.email por nuevoCliente.correo -->
+      <input type="email" name="correo" placeholder="Correo" [(ngModel)]="nuevoCliente.correo" required
+        style="margin-right: 10px; padding: 5px;">
+      <!-- Reemplaza tu input de teléfono actual por este -->
+      <input type="text" name="telefono" placeholder="Teléfono (10 dígitos)" [(ngModel)]="nuevoCliente.telefono"
+        required maxlength="10" minlength="10" pattern="[0-9]{10}" title="El teléfono debe tener exactamente 10 números"
+        style="margin-right: 10px; padding: 5px;">
+
+      <!-- Se agregó el campo de dirección -->
+      <input type="text" name="direccion" placeholder="Dirección" [(ngModel)]="nuevoCliente.direccion"
+        style="margin-right: 10px; padding: 5px;">
+
+      <button type="submit"
+        style="padding: 6px 15px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+        Guardar
+      </button>
+    </form>
+  </div>
+
+  <!-- Tabla -->
+  <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
+    <thead style="background-color: #333; color: white;">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th>Dirección</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cliente of listaClientes">
+        <td>{{ cliente.id }}</td>
+        <td>{{ cliente.nombre }}</td>
+        <td>{{ cliente.apellido }}</td>
+
+        <!-- Se cambió cliente.email por cliente.correo -->
+        <td>{{ cliente.correo }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>{{ cliente.direccion }}</td>
+      </tr>
+      <tr *ngIf="listaClientes.length === 0">
+        <td colspan="6" style="text-align: center;">No hay clientes registrados</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

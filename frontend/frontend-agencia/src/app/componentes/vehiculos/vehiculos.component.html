@@ -1,0 +1,64 @@
+<div style="padding: 20px; font-family: sans-serif;">
+  <h2>Gestión de Vehículos</h2>
+
+  <!-- Formulario Dinámico -->
+  <div style="background-color: #f4f4f4; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+    <h3>{{ editando ? 'Editar Vehículo' : 'Registrar Vehículo' }}</h3>
+    <form (ngSubmit)="guardarVehiculo()">
+      <input type="text" name="vin" placeholder="VIN" [(ngModel)]="nuevoVehiculo.vin" required style="margin-right: 10px; padding: 5px;">
+      <input type="text" name="color" placeholder="Color" [(ngModel)]="nuevoVehiculo.color" required style="margin-right: 10px; padding: 5px;">
+      <input type="number" name="precio" placeholder="0" [(ngModel)]="nuevoVehiculo.precio" required style="margin-right: 10px; padding: 5px;">
+      <select name="estadoVehiculo" [(ngModel)]="nuevoVehiculo.estadoVehiculo" required style="margin-right: 10px; padding: 5px;">
+        <option value="Disponible">Disponible</option>
+        <option value="Vendido">Vendido</option>
+      </select>
+      
+      <button type="submit" style="padding: 6px 15px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+        {{ editando ? 'Actualizar' : 'Guardar' }}
+      </button>
+      
+      <!-- Botón visible solo en modo edición -->
+      <button type="button" *ngIf="editando" (click)="cancelarEdicion()" style="margin-left: 10px; padding: 6px 15px; background-color: #6c757d; color: white; border: none; cursor: pointer;">
+        Cancelar
+      </button>
+    </form>
+  </div>
+
+  <!-- Buscador -->
+  <div style="margin-bottom: 15px;">
+    <input type="text" placeholder="🔍 Buscar por VIN, Color o Estado..." 
+           [(ngModel)]="filtroTexto" (input)="aplicarFiltro()" 
+           style="width: 100%; max-width: 400px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+  </div>
+
+  <!-- Tabla -->
+  <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
+    <thead style="background-color: #333; color: white;">
+      <tr>
+        <th>ID</th>
+        <th>VIN</th>
+        <th>Color</th>
+        <th>Precio</th>
+        <th>Estado</th>
+        <th>Acciones</th> <!-- Columna nueva -->
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Cambio: Iteramos vehiculosFiltrados en lugar de listaVehiculos -->
+      <tr *ngFor="let vehiculo of vehiculosFiltrados">
+        <td>{{ vehiculo.id }}</td>
+        <td>{{ vehiculo.vin }}</td>
+        <td>{{ vehiculo.color }}</td>
+        <td>${{ vehiculo.precio }}</td>
+        <td>{{ vehiculo.estadoVehiculo }}</td>
+        <td>
+          <button (click)="editarVehiculo(vehiculo)" style="margin-right: 5px; padding: 4px 8px; background-color: #ffc107; border: none; cursor: pointer;">Editar</button>
+          <button (click)="eliminarVehiculo(vehiculo.id)" style="padding: 4px 8px; background-color: #dc3545; color: white; border: none; cursor: pointer;">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="vehiculosFiltrados.length === 0">
+        <td colspan="6" style="text-align: center;">No se encontraron vehículos</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

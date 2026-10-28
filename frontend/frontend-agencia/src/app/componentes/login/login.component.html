@@ -1,0 +1,28 @@
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; background: #f4f4f4; border-radius: 8px;">
+    <h2 style="text-align: center;">Iniciar Sesión</h2>
+
+    <div *ngIf="mensajeError"
+        style="color: white; background: #dc3545; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+        {{ mensajeError }}
+    </div>
+
+    <form (ngSubmit)="iniciarSesion()">
+        <label style="display: block; margin-bottom: 10px;">
+            <strong>Correo:</strong>
+            <input type="email" name="correo" [(ngModel)]="correo" required
+                style="width: 100%; padding: 8px; margin-top: 5px;">
+        </label>
+
+        <label style="display: block; margin-bottom: 20px;">
+            <strong>Contraseña (Teléfono):</strong>
+            <!-- Usamos type="password" para que los números se oculten -->
+            <input type="password" name="telefono" [(ngModel)]="telefono" required
+                style="width: 100%; padding: 8px; margin-top: 5px;">
+        </label>
+
+        <button type="submit"
+            style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Ingresar
+        </button>
+    </form>
+</div>

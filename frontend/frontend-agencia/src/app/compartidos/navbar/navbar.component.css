@@ -1,0 +1,50 @@
+.navbar {
+  background-color: #333; /* Mismo color que la cabecera de tu tabla */
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  display: inline;
+}
+
+.navbar-links a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Efecto al pasar el mouse */
+.navbar-links a:hover {
+  background-color: #555;
+  color: white;
+}
+
+/* Clase que Angular aplica automáticamente al enlace de la página donde estás */
+.activo {
+  background-color: #007bff !important; /* Azul como tu botón de Guardar */
+  color: white !important;
+  font-weight: bold;
+}
