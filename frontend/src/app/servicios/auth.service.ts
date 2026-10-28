@@ -18,6 +18,11 @@ export class AuthService {
     this.logout();
     return null;
   }
+  get isAdmin(): boolean {
+    const token = this.token;
+    if (!token) return false;
+    try { return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).roles?.includes('ROLE_ADMIN') === true; } catch { return false; }
+  }
   logout() { sessionStorage.removeItem(this.key); localStorage.removeItem('idUsuarioActual'); }
   me() { return this.http.get<Perfil>('/api/auth/me'); }
   login(datos: {correo: string; password: string}) { return this.http.post<{accessToken: string; usuario: Perfil}>('/api/auth/login', datos).pipe(tap(res => sessionStorage.setItem(this.key, res.accessToken))); }

@@ -18,7 +18,7 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
 
     private Usuario map(UsuarioEntity e) {
         Usuario u = new Usuario(e.getId(), e.getNombreUsuario(), e.getCorreo(), e.getPassword(), e.getRolId());
-        u.setTelefono(e.getTelefono());
+        u.setTelefono(e.getTelefono()); u.setRol(e.getRol());
         return u;
     }
     @Override
@@ -46,7 +46,7 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         entity.setCorreo(usuario.getCorreo());
         entity.setPassword(usuario.getPassword());
         entity.setRolId(usuario.getRolId());
-        entity.setTelefono(usuario.getTelefono());
+        entity.setTelefono(usuario.getTelefono()); entity.setRol(usuario.getRol());
 
         UsuarioEntity saved = repository.save(entity);
         return map(saved);

@@ -22,6 +22,9 @@ public class UsuarioEntity {
     @Column(name = "rol_id")
     private Long rolId;
 
+    private String rol = "ROLE_USER";
+    public String getRol() { return rol == null ? "ROLE_USER" : rol; }
+    public void setRol(String rol) { this.rol = rol; }
     private String telefono;
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }

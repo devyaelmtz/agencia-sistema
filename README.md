@@ -34,3 +34,35 @@ Los servicios y clases de los módulos anteriores se conservan con sus plantilla
 - Frontend: `npm test -- --watch=false` y `npm run build`.
 - Backend: `bash mvnw verify` (PostgreSQL debe estar activo).
 - Las pruebas de integración usan transacciones con rollback; no requieren usuarios reales.
+
+## Vehículos y roles
+
+El registro asigna `ROLE_USER`. Para habilitar el primer administrador:
+
+1. Registra una cuenta normalmente.
+2. Arranca el backend con `ADMIN_BOOTSTRAP_EMAIL` igual al correo de esa cuenta (variable del proceso, no del navegador).
+3. Retira esa variable tras la promoción y vuelve a iniciar sesión para obtener un JWT con `roles: ["ROLE_ADMIN"]`.
+
+Un administrador puede promover otra cuenta con `PUT /api/admin/users/{id}/admin` (204), enviando su token Bearer. La cuenta promovida debe volver a iniciar sesión. No se admite asignar roles desde el registro público. Las cuentas antiguas sin rol explícito se consideran `ROLE_USER`. Mantén `JWT_SECRET` estable para conservar los tokens entre reinicios.
+
+En el navegador, inicia sesión como administrador y sigue **Administrar vehículos** desde el dashboard, o entra en `/admin/vehicles`. El panel incluye alta, edición, listado, estados de carga, validación, mensajes de resultado y confirmación de eliminación.
+
+### Postman
+
+Usa `Authorization: Bearer <accessToken>` del login y `Content-Type: application/json`.
+
+| Método | Endpoint | Permiso | Resultado |
+|---|---|---|---|
+| GET | `/api/vehicles` | Usuario autenticado | 200, listado |
+| GET | `/api/vehicles/{id}` | Usuario autenticado | 200 o 404 |
+| POST | `/api/vehicles` | ADMIN | 201 y Location |
+| PUT | `/api/vehicles/{id}` | ADMIN | 200 o 404 |
+| DELETE | `/api/vehicles/{id}` | ADMIN | 204 o 404 |
+
+Ejemplo de cuerpo para POST/PUT:
+
+```json
+{"marca":"Toyota","modelo":"Corolla","anio":2024,"vin":"1HGCM82633A004352","precio":250000.50,"kilometraje":12000,"estado":"DISPONIBLE"}
+```
+
+VIN: único, 17 caracteres alfanuméricos en mayúsculas sin I/O/Q. Año: 1886 hasta el siguiente año calendario. Precio: no negativo, máximo 13 enteros y 2 decimales. Kilometraje: entero no negativo. Estados: `DISPONIBLE`, `VENDIDO`, `MANTENIMIENTO`. Datos inválidos devuelven 400; VIN duplicado 409; sin JWT 401; escritura con ROLE_USER 403. La API legacy `/api/vehiculos` queda restringida a ADMIN para impedir escrituras por una vía alternativa. El nuevo inventario usa la tabla `vehicles`; no se migran automáticamente registros del modelo legacy.

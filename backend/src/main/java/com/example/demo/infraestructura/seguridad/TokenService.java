@@ -11,7 +11,7 @@ public class TokenService {
     public String emitir(Usuario usuario) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder().issuer("agencia-sistema").subject(usuario.getId().toString())
-            .issuedAt(now).expiresAt(now.plusSeconds(3600)).build();
+            .claim("roles", java.util.List.of(usuario.getRol())).issuedAt(now).expiresAt(now.plusSeconds(3600)).build();
         return encoder.encode(JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(),claims)).getTokenValue();
     }
 }
