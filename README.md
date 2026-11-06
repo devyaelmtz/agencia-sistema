@@ -21,7 +21,7 @@ API: `POST /api/auth/register` acepta `nombreUsuario`, `correo`, `telefono`, `pa
 
 ## Sesión JWT
 
-El login retorna `accessToken`, `tokenType` (Bearer), `expiresIn` (3600 segundos) y `usuario`. La firma es HS256 y se validan emisor y caducidad mediante el filtro Bearer oficial de Spring Security. La API es stateless: registro y login son públicos; el resto requiere un token válido. La gestión legacy `/api/usuarios` sigue bloqueada.
+El login retorna `accessToken`, `tokenType` (Bearer), `expiresIn` (3600 segundos) y `usuario`. La firma es HS256 y se validan emisor y caducidad mediante el filtro Bearer oficial de Spring Security. La API es stateless: registro y login son públicos; el resto requiere un token válido. La gestión `/api/usuarios` utiliza permisos de administrador y solicitudes ARCO para cambios del propietario.
 
 Angular conserva el token en `sessionStorage` (por pestaña), lo añade a las llamadas de la API y redirige a login ante un 401. El guard rechaza tokens ausentes, ilegibles o caducados; la verificación criptográfica corresponde al backend. El dashboard consulta el perfil autenticado; cerrar sesión elimina el token local, pero una copia del token sigue siendo válida hasta su caducidad. No se incluye refresh token ni revocación remota.
 
@@ -51,22 +51,34 @@ En el navegador, inicia sesión como administrador y sigue **Administrar vehícu
 
 Usa `Authorization: Bearer <accessToken>` del login y `Content-Type: application/json`.
 
-| Método | Endpoint | Permiso | Resultado |
-|---|---|---|---|
-| GET | `/api/vehicles` | Usuario autenticado | 200, listado |
-| GET | `/api/vehicles/{id}` | Usuario autenticado | 200 o 404 |
-| POST | `/api/vehicles` | ADMIN | 201 y Location |
-| PUT | `/api/vehicles/{id}` | ADMIN | 200 o 404 |
-| DELETE | `/api/vehicles/{id}` | ADMIN | 204 o 404 |
+| Método | Endpoint             | Permiso             | Resultado      |
+| ------ | -------------------- | ------------------- | -------------- |
+| GET    | `/api/vehicles`      | Usuario autenticado | 200, listado   |
+| GET    | `/api/vehicles/{id}` | Usuario autenticado | 200 o 404      |
+| POST   | `/api/vehicles`      | ADMIN               | 201 y Location |
+| PUT    | `/api/vehicles/{id}` | ADMIN               | 200 o 404      |
+| DELETE | `/api/vehicles/{id}` | ADMIN               | 204 o 404      |
 
 Ejemplo de cuerpo para POST/PUT:
 
 ```json
-{"marca":"Toyota","modelo":"Corolla","anio":2024,"vin":"1HGCM82633A004352","precio":250000.50,"kilometraje":12000,"estado":"DISPONIBLE"}
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anio": 2024,
+  "vin": "1HGCM82633A004352",
+  "precio": 250000.5,
+  "kilometraje": 12000,
+  "estado": "DISPONIBLE"
+}
 ```
 
-VIN: único, 17 caracteres alfanuméricos en mayúsculas sin I/O/Q. Año: 1886 hasta el siguiente año calendario. Precio: no negativo, máximo 13 enteros y 2 decimales. Kilometraje: entero no negativo. Estados: `DISPONIBLE`, `VENDIDO`, `MANTENIMIENTO`. Datos inválidos devuelven 400; VIN duplicado 409; sin JWT 401; escritura con ROLE_USER 403. La API legacy `/api/vehiculos` queda restringida a ADMIN para impedir escrituras por una vía alternativa. El nuevo inventario usa la tabla `vehicles`; no se migran automáticamente registros del modelo legacy.
+VIN: único, 17 caracteres alfanuméricos en mayúsculas sin I/O/Q. Año: 1886 hasta el siguiente año calendario. Precio: no negativo, máximo 13 enteros y 2 decimales. Kilometraje: entero no negativo. Estados: `DISPONIBLE`, `RESERVADO`, `VENDIDO`, `MANTENIMIENTO` (compatibilidad histórica). Datos inválidos devuelven 400; VIN duplicado 409; sin JWT 401; escritura con ROLE_USER 403. La API legacy `/api/vehiculos` queda restringida a ADMIN para impedir escrituras por una vía alternativa. El nuevo inventario usa la tabla `vehicles`; no se migran automáticamente registros del modelo legacy.
 
 ## Red local, recuperación y nuevo ARCO
 
 Consulta [la guía para Windows, SMTP y solicitudes ARCO](docs/REVISION-RED-CORREO-ARCO.md). El servidor de desarrollo Angular y Spring permiten acceso LAN; los nuevos formularios están en `/forgot-password`, `/reset-password` y `/arco`.
+
+## Gestión y aprobación administrativa
+
+Consulta [módulos, migraciones y flujo ARCO](docs/MODULOS-Y-APROBACIONES-ARCO.md) para Usuarios, Clientes, Vehículos, Ventas, vinculación de clientes, solicitudes estructuradas y resolución administrativa.

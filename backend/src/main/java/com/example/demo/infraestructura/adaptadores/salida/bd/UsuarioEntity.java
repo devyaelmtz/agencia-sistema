@@ -5,77 +5,91 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "usuarios")
 public class UsuarioEntity {
+  @Version public Long version;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "nombre_usuario", length = 50)
-    private String nombreUsuario;
+  @Column(name = "nombre_usuario", length = 50)
+  private String nombreUsuario;
 
-    @Column(length = 100, unique = true)
-    private String correo;
+  @Column(length = 100, unique = true)
+  private String correo;
 
-    @Column(length = 255)
-    private String password;
+  @Column(length = 255)
+  private String password;
 
-    @Column(name = "rol_id")
-    private Long rolId;
+  @Column(name = "rol_id")
+  private Long rolId;
 
-    private String rol = "ROLE_USER";
-    public String getRol() { return rol == null ? "ROLE_USER" : rol; }
-    public void setRol(String rol) { this.rol = rol; }
-    private String telefono;
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+  private String rol = "ROLE_USER";
 
-    public UsuarioEntity() {}
+  public String getRol() {
+    return rol == null ? "ROLE_USER" : rol;
+  }
 
-    public UsuarioEntity(Long id, String nombreUsuario, String correo, String password, Long rolId) {
-        this.id = id;
-        this.nombreUsuario = nombreUsuario;
-        this.correo = correo;
-        this.password = password;
-        this.rolId = rolId;
-    }
+  public void setRol(String rol) {
+    this.rol = rol;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  private String telefono;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public String getTelefono() {
+    return telefono;
+  }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
+  public void setTelefono(String telefono) {
+    this.telefono = telefono;
+  }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
+  public UsuarioEntity() {}
 
-    public String getCorreo() {
-        return correo;
-    }
+  public UsuarioEntity(Long id, String nombreUsuario, String correo, String password, Long rolId) {
+    this.id = id;
+    this.nombreUsuario = nombreUsuario;
+    this.correo = correo;
+    this.password = password;
+    this.rolId = rolId;
+  }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public String getNombreUsuario() {
+    return nombreUsuario;
+  }
 
-    public Long getRolId() {
-        return rolId;
-    }
+  public void setNombreUsuario(String nombreUsuario) {
+    this.nombreUsuario = nombreUsuario;
+  }
 
-    public void setRolId(Long rolId) {
-        this.rolId = rolId;
-    }
+  public String getCorreo() {
+    return correo;
+  }
+
+  public void setCorreo(String correo) {
+    this.correo = correo;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public Long getRolId() {
+    return rolId;
+  }
+
+  public void setRolId(Long rolId) {
+    this.rolId = rolId;
+  }
 }

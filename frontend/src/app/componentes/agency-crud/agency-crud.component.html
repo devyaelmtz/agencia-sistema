@@ -1,0 +1,192 @@
+<section class="panel">
+  <a routerLink="/dashboard">← Inicio</a>
+  <h1>{{ title }}</h1>
+  <p *ngIf="kind === 'clientes' && !auth.isAdmin">
+    Solo ves los clientes asociados a tu cuenta. Las correcciones y eliminaciones requieren
+    aprobación administrativa.
+  </p>
+  <p *ngIf="kind === 'perfil'">
+    Los cambios de perfil requieren aprobación. Para cambiar tu contraseña utiliza la recuperación
+    desde el inicio de sesión.
+  </p>
+  <p role="status" *ngIf="message()">{{ message() }}</p>
+  <p role="alert" *ngIf="error()">{{ error() }}</p>
+  <button *ngIf="kind !== 'perfil'" (click)="open()" [disabled]="busy()">
+    Agregar {{ kind === 'ventas' ? 'venta' : kind === 'usuarios' ? 'usuario' : 'cliente' }}
+  </button>
+  <button (click)="load()" [disabled]="busy() || loading()">Actualizar</button>
+  <form *ngIf="editing()" #editor="ngForm" (ngSubmit)="save()">
+    <h2>{{ selected ? 'Editar' : 'Crear' }}</h2>
+    <div *ngFor="let field of fields">
+      <label [for]="field.key">{{ field.label }}</label>
+      <select
+        *ngIf="field.type === 'select'"
+        [id]="field.key"
+        [name]="field.key"
+        [(ngModel)]="data[field.key]"
+        [required]="field.required ?? false"
+      >
+        <option *ngFor="let o of field.options" [value]="o">{{ o }}</option>
+      </select>
+      <select
+        *ngIf="field.type === 'client'"
+        [id]="field.key"
+        [name]="field.key"
+        [(ngModel)]="data[field.key]"
+        required
+      >
+        <option value="">Seleccionar cliente</option>
+        <option *ngFor="let c of clients()" [ngValue]="c.id">
+          #{{ c.id }} {{ c.nombre }} {{ c.apellido }}
+        </option>
+      </select>
+      <select
+        *ngIf="field.type === 'vehicle'"
+        [id]="field.key"
+        [name]="field.key"
+        [(ngModel)]="data[field.key]"
+        [disabled]="!!selected"
+        required
+      >
+        <option value="">Seleccionar vehículo</option>
+        <option
+          *ngFor="let v of vehicles()"
+          [ngValue]="v.id"
+          [disabled]="!selected && v.estado !== 'DISPONIBLE' && v.estado !== 'RESERVADO'"
+        >
+          {{ v.marca }} {{ v.modelo }} · {{ v.vin }} · {{ v.estado }}
+        </option>
+      </select>
+      <input
+        *ngIf="!['select', 'client', 'vehicle'].includes(field.type)"
+        [id]="field.key"
+        [name]="field.key"
+        [type]="field.type"
+        [(ngModel)]="data[field.key]"
+        [required]="(field.required ?? false) || (field.type === 'password' && !selected)"
+        [attr.maxlength]="field.max ?? null"
+        [pattern]="field.pattern ?? ''"
+        [attr.min]="field.type === 'number' ? 0.01 : null"
+        [attr.step]="field.type === 'number' ? '0.01' : null"
+        [attr.autocomplete]="field.type === 'password' ? 'new-password' : null"
+      />
+    </div>
+    <ng-container *ngIf="needsApproval"
+      ><label for="reason">Motivo de la rectificación</label
+      ><textarea
+        id="reason"
+        name="reason"
+        [(ngModel)]="description"
+        minlength="10"
+        maxlength="4000"
+        required
+      ></textarea
+      ><label
+        ><input type="checkbox" name="notice" [(ngModel)]="notice" required /> Confirmo que leí el
+        <a routerLink="/arco">aviso de privacidad</a> (academico-1).</label
+      ></ng-container
+    >
+    <button [disabled]="busy() || editor.invalid">
+      {{ needsApproval ? 'Solicitar aprobación' : 'Guardar' }}
+    </button>
+    <button type="button" (click)="editing.set(false)" [disabled]="busy()">Cancelar</button>
+  </form>
+  <section *ngIf="deleting()" role="alertdialog" aria-label="Confirmar eliminación">
+    <h2>{{ auth.isAdmin ? 'Confirmar eliminación' : 'Solicitar cancelación' }}</h2>
+    <p>
+      Registro #{{ deleting()?.id }}.
+      {{
+        auth.isAdmin
+          ? 'Eliminar una venta devolverá el vehículo a DISPONIBLE. Los registros relacionados no se pueden eliminar.'
+          : 'El registro se conserva hasta que un administrador apruebe la solicitud.'
+      }}
+    </p>
+    <ng-container *ngIf="!auth.isAdmin"
+      ><label for="delete-reason">Motivo</label
+      ><textarea id="delete-reason" [(ngModel)]="description" maxlength="4000"></textarea
+      ><label
+        ><input type="checkbox" [(ngModel)]="notice" /> Leí el
+        <a routerLink="/arco">aviso de privacidad</a>.</label
+      ></ng-container
+    >
+    <button (click)="remove()" [disabled]="busy()">Confirmar</button>
+    <button (click)="deleting.set(null)" [disabled]="busy()">Cancelar</button>
+  </section>
+  <section *ngIf="requestRow()">
+    <h2>Solicitud ARCO para registro #{{ requestRow()?.id }}</h2>
+    <label for="action">Derecho</label
+    ><select id="action" [(ngModel)]="action">
+      <option>ACCESO</option>
+      <option>CANCELACION</option>
+      <option *ngIf="kind === 'clientes'">OPOSICION</option>
+    </select>
+    <p>
+      Acceso genera una copia autorizada. Oposición desactiva publicidad. Para rectificar, utiliza
+      Editar.
+    </p>
+    <label for="request-reason">Descripción</label
+    ><textarea id="request-reason" [(ngModel)]="description" maxlength="4000"></textarea
+    ><label
+      ><input type="checkbox" [(ngModel)]="notice" /> Leí el
+      <a routerLink="/arco">aviso de privacidad</a>.</label
+    ><button
+      (click)="sendRequest()"
+      [disabled]="busy() || !notice || description.trim().length < 10"
+    >
+      Enviar solicitud
+    </button>
+    <button (click)="requestRow.set(null)" [disabled]="busy()">Cancelar</button>
+  </section>
+  <form *ngIf="linkRow()" (ngSubmit)="link()">
+    <h2>Vincular cliente #{{ linkRow()?.id }} con una cuenta</h2>
+    <p>
+      El usuario seleccionado podrá consultar este cliente y solicitar cambios. Revisa la identidad
+      antes de vincularlo.
+    </p>
+    <label for="owner">Cuenta propietaria</label
+    ><select id="owner" name="owner" [(ngModel)]="ownerId" required>
+      <option [ngValue]="0">Seleccionar usuario</option>
+      <option *ngFor="let u of users()" [ngValue]="u.id">
+        {{ u.nombreUsuario }} · {{ u.correo }}
+      </option></select
+    ><button [disabled]="busy() || !ownerId">Confirmar vínculo</button
+    ><button type="button" (click)="linkRow.set(null)" [disabled]="busy()">Cancelar</button>
+  </form>
+  <p *ngIf="loading()">Cargando…</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th *ngFor="let f of fields">{{ f.type === 'password' ? '' : f.label }}</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows()">
+          <td>{{ row.id }}</td>
+          <td *ngFor="let f of fields">{{ f.type === 'password' ? '' : display(row, f.key) }}</td>
+          <td>
+            <button
+              *ngIf="kind === 'clientes' && auth.isAdmin"
+              (click)="linkRow.set(row); ownerId = 0"
+              [disabled]="busy()"
+            >
+              Vincular cuenta
+            </button>
+            <button (click)="open(row)" [disabled]="busy()">Editar</button>
+            <button (click)="askDelete(row)" [disabled]="busy()">
+              {{ auth.isAdmin ? 'Eliminar' : 'Solicitar eliminación' }}
+            </button>
+            <button *ngIf="!auth.isAdmin" (click)="askRequest(row)" [disabled]="busy()">
+              Derechos ARCO
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="!rows().length && !loading()">
+          <td [attr.colspan]="fields.length + 2">Sin registros.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

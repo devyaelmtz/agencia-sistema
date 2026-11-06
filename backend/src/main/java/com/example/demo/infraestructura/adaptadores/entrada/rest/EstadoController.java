@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/estados")
-@CrossOrigin(origins = "*")
 public class EstadoController {
 
     private final EstadoUseCase useCase;

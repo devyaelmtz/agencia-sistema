@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tipos-vehiculo")
-@CrossOrigin(origins = "*")
 public class TipoVehiculoController {
 
     private final TipoVehiculoUseCase useCase;

@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sucursales")
-@CrossOrigin(origins = "*")
 public class SucursalController {
 
     private final SucursalUseCase useCase;
