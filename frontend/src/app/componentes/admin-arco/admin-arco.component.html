@@ -1,0 +1,59 @@
+<section class="panel">
+  <a routerLink="/dashboard">← Inicio</a>
+  <h1>Administración de solicitudes ARCO</h1>
+  <p>
+    La aprobación aplica la propuesta y registra la resolución en una sola transacción. El rechazo
+    conserva los datos originales.
+  </p>
+  <p role="alert" *ngIf="error()">{{ error() }}</p>
+  <p role="status" *ngIf="message()">{{ message() }}</p>
+  <label for="filter">Estado</label
+  ><select id="filter" [(ngModel)]="filter">
+    <option value="">Todos</option>
+    <option>PENDIENTE</option>
+    <option>APROBADA</option>
+    <option>RECHAZADA</option></select
+  ><button (click)="load()" [disabled]="busy()">Actualizar</button>
+  <article *ngFor="let row of rows()">
+    <ng-container *ngIf="!filter || filter === row.estado"
+      ><h2>#{{ row.id }} · {{ row.tipo }} · {{ row.estado }}</h2>
+      <p>
+        Solicitante #{{ row.usuarioId }} · {{ row.tablaAfectada || 'Solicitud histórica' }} #{{
+          row.registroId
+        }}
+        · versión {{ row.registroVersion }}
+      </p>
+      <p>{{ row.descripcion }}</p>
+      <pre *ngIf="row.propuesta">{{ row.propuesta }}</pre>
+      <p *ngIf="row.motivoResolucion">
+        {{ row.motivoResolucion }} · Administrador #{{ row.administradorId }} ·
+        {{ row.fechaResolucion | date: 'medium' }}
+      </p>
+      <button *ngIf="row.estado === 'PENDIENTE'" (click)="open(row)" [disabled]="busy()">
+        Revisar resolución
+      </button></ng-container
+    >
+  </article>
+  <form *ngIf="selected()" #form="ngForm" (ngSubmit)="resolve()">
+    <h2>Resolver folio #{{ selected()?.id }}</h2>
+    <p *ngIf="!selected()?.tablaAfectada">
+      Solicitud histórica sin propuesta ejecutable: solo puede rechazarse y solicitar una nueva
+      propuesta desde el registro.
+    </p>
+    <label for="decision">Decisión</label
+    ><select id="decision" name="decision" [(ngModel)]="decision">
+      <option *ngIf="selected()?.tablaAfectada" value="APROBAR">APROBAR y ejecutar</option>
+      <option value="RECHAZAR">RECHAZAR</option></select
+    ><label for="reason">Motivo de resolución</label
+    ><textarea
+      id="reason"
+      name="reason"
+      [(ngModel)]="reason"
+      minlength="5"
+      maxlength="1000"
+      required
+    ></textarea
+    ><button [disabled]="busy() || form.invalid">Confirmar resolución</button>
+    <button type="button" (click)="selected.set(null)" [disabled]="busy()">Cancelar</button>
+  </form>
+</section>
